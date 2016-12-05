@@ -47,6 +47,7 @@ chord_patterns = {
     'seventh_dominant_suspended_4': [1,4,5,'7b'],
     'minor_7': [1,'3b',5,'7b'],
     'minor_7_flat_5': [1,'3b','5b','7b'],
+    'minor_7_add_11': [1,'3b',5,'7b',11],
     'ninth_dominant': [1,3,5,'7b',9],
     'ninth_dominant_suspended_4': [1,4,5,'7b',9],
     'major_9': [1,3,5,7,9],
@@ -62,7 +63,7 @@ chord_patterns = {
     'major_13_flat_9': [1,3,5,'7b','9b',13],
     'major_13_sharp_9': [1,3,5,'7b','10b',13],
     'major_13': [1,3,5,7,9,13],
-    'minor_11': [1,'3b',5,'7b',9,13],                
+    'minor_13': [1,'3b',5,'7b',9,13],                
     }
 
 def scale_builder(scale_pattern, key):
@@ -135,23 +136,26 @@ def key_finder(chords):
     scales_with_keys = {}
     
     for scale_pattern in scale_patterns:
-        all_chords_in_all_keys = all_chords_with_scales(scale_patterns.get(scale_pattern))
-        scale = scale_patterns.get(scale_pattern)
+        all_chords_in_all_keys = all_chords_with_scales(scale_patterns.get(scale_pattern))        
         keys = {}
 
         for tone in all_chords_in_all_keys:
+
             key_chords = {}
             for interval in all_chords_in_all_keys[tone]:
+                chord_list = [] # test this by passing two copies of the same chord into the function
                 for chord in chords:
-                    if chord in all_chords_in_all_keys[tone][interval].keys():
-                        key_chords[interval] = chord
-            if len(key_chords) >= len(chords):
+                    if chord in all_chords_in_all_keys[tone][interval]: #.keys():
+                        chord_list.append(chord)
+                if len(chord_list) > 0:
+                    key_chords[interval] = chord_list
+            if sum(len(v) for v in key_chords.values()) >= len(chords):
                 keys[tone] = key_chords
 
         if len(keys) > 0:
             scales_with_keys[scale_pattern] = keys
-        
-    return chords, scales_with_keys, all_chords_in_all_keys
+
+    return chords, scales_with_keys
 
 def chord_finder(notes):
     # pass a list of notes and get a list of possible chords
@@ -160,14 +164,14 @@ def chord_finder(notes):
 
 # GET DATA!!!
 
-## EXAMPLE OF GETTING A SCALE
+# EXAMPLE OF GETTING A SCALE
 '''
 scale_pattern = scale_patterns.get('major_scale')
 key = "C"
 
 scale = scale_builder(scale_pattern, key)
 '''
-## EXAMPLE OF GETTING A CHORD
+# EXAMPLE OF GETTING A CHORD
 '''
 scale_pattern = scale_patterns.get('major_scale')
 root = "C"
@@ -175,7 +179,7 @@ chord_pattern = 'major'
 
 chord = chord_builder(scale_pattern, root, chord_pattern)[1]
 '''
-## EXAMPLE OF GETTING ALL OF THE CHORDS THAT GO WITH A KEY - includes a print
+# EXAMPLE OF GETTING ALL OF THE CHORDS THAT GO WITH A KEY - includes a print
 '''
 scale_pattern = scale_patterns.get('major_scale')
 key = "F"
@@ -186,7 +190,7 @@ for interval in chords_in_key:
     for chord in chords_in_key[interval]:
         print (interval, chord, chords_in_key[interval][chord])
  '''
-## EXAMPLE OF GETTING ALL CHORDS FOR ALL KEYS
+# EXAMPLE OF GETTING ALL CHORDS FOR ALL KEYS
 '''
 scale_pattern = scale_patterns.get('major_scale')
 
@@ -198,12 +202,19 @@ for note in all_chords:
         print (interval)
         print (all_chords[note][interval])
 '''
-## EXAMPLE OF GETTING ALL KEYS FOR SOME SPECIFIC CHORDS
+# EXAMPLE OF GETTING ALL KEYS FOR SOME SPECIFIC CHORDS
 # chords for a version of high and dry - NOT FINDING THE KEY OF A!!!!!
-chords = ['F# seventh_dominant', 'A major', 'E major', 'E suspended_4th']
 
-chords, keys, all_chords_in_all_keys = key_finder(chords)
+chords = ['F# minor_7_add_11', 'A suspended_2nd', 'E major', 'E fifth']
 
-for key in keys:
-    print (key, keys[key])
+chords, keys = key_finder(chords)
+
+for scale in keys:
+    print (scale, ":")
+    for key in keys[scale]:
+        print ("    {} {}".format(key, ":"))
+        for interval in keys[scale][key]:
+            print ("        {} {}".format(interval, ":"))
+            print ("        {}".format(', '.join(keys[scale][key][interval])))
+    print ("")
 
