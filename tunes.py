@@ -160,7 +160,7 @@ def chord_finder(notes):
 
 # GET DATA!!!
 
-    ## EXAMPLE OF GETTING A SCALE
+## EXAMPLE OF GETTING A SCALE
 '''
 scale_pattern = scale_patterns.get('major_scale')
 key = "C"
@@ -183,8 +183,8 @@ key = "F"
 chords_in_key = scale_chords(scale_pattern, key)
 
 for interval in chords_in_key:
-	for chord in chords_in_key[interval]:
-		print (interval, chord, chords_in_key[interval][chord])
+    for chord in chords_in_key[interval]:
+        print (interval, chord, chords_in_key[interval][chord])
  '''
 ## EXAMPLE OF GETTING ALL CHORDS FOR ALL KEYS
 '''
